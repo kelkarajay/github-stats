@@ -4,17 +4,20 @@ import { GithubClient } from './client/github-client';
 import { User, UserResponse } from './model/user.model';
 
 export class Server {
-    public constructor() {}
+    readonly app: express.Application
+
+    public constructor() {
+        this.app = express();
+    }
 
     public startServer() {          
-        const app = express();
         const port = process.env.PORT || '8000';
 
-        app.get('/', (_req: Request, res: Response) => {
+        this.app.get('/', (_req: Request, res: Response) => {
             return res.send('API is working 🤓');
         });
 
-        app.get('/users/languages/:name', async (_req: Request, res: Response) => {
+        this.app.get('/users/languages/:name', async (_req: Request, res: Response) => {
             const client = new GithubClient();
             
             try {
@@ -36,7 +39,7 @@ export class Server {
               }
         });
 
-        app.listen(port, err => {
+        this.app.listen(port, err => {
             if (err) return console.error(err);
             return console.log(`Server is listening on ${port}`);
         });
