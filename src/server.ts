@@ -1,6 +1,7 @@
 import express, { response } from 'express';
 import { Request, Response } from 'express';
-import { GithubClient } from './client.ts/github-client';
+import { GithubClient } from './client/github-client';
+import { User, UserResponse } from './model/user.model';
 
 export class Server {
     public constructor() {}
@@ -13,13 +14,26 @@ export class Server {
             return res.send('API is working 🤓');
         });
 
-        app.get('/users/languages/:name', (_req: Request, res: Response) => {
+        app.get('/users/languages/:name', async (_req: Request, res: Response) => {
             const client = new GithubClient();
-            client.getUsersByLanguage(_req.params.name).then((response) => {
-                return res.send(response);
-            }).catch(() => {
+            
+            try {
+                const response = await client.getUsersByLanguage(_req.params.name);
+                const payload = new UserResponse();
+            ​
+                await Promise.all(response.items.map(async user => {
+                  const userId = user.login;
+                  const userData = await client.getUserData(userId);
+                  payload.items.push(new User(userId, userData.name, userData.avatar_url, userData.followers));
+                }));
+                
+                payload.total_count = response.items.length;
+            ​
+                res.send(payload);
+              } catch (err) {
+                console.log(err);
                 return res.send('ruh roh');
-            });
+              }
         });
 
         app.listen(port, err => {
