@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: docker/build-push-action@v1.0.1
     - name: Build and push Docker images
-      with:
+    - with:
         registry: docker.pkg.github.com
         repository: xivolkar/github-stats
         username: ${{ secrets.DOCKER_USERNAME }}
