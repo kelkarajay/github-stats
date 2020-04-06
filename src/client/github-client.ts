@@ -22,30 +22,7 @@ export class GithubClient {
         options.path += language;
         options.headers.Authorization += process.env.GH_TOKEN;
 
-        return new Promise((resolve, reject) => {
-            var req = https.request(options, (response) => {
-                let responseBody = '';
-    
-                response.on('data', (chunk) => {
-                    responseBody += chunk;
-                });
-    
-                response.on('end', () => {
-                    if(responseBody.length){
-                        try{
-                            resolve(JSON.parse(responseBody));
-                        } catch (error) {
-                            reject(error);
-                        }
-                    }
-                });
-            }).on('error', (error) => {
-                console.log('Error occurred', error);
-                reject(error);
-            });
-    
-            req.end();
-        });
+        return this.buildHttpRequest(options);
     }
 
     public getUserData(username: String) : Promise<GithubUserDetailModel> {
@@ -63,6 +40,10 @@ export class GithubClient {
         options.path += username;
         options.headers.Authorization += process.env.GH_TOKEN;
 
+        return this.buildHttpRequest(options);
+    }
+
+    private buildHttpRequest(options: https.RequestOptions) : Promise<any> {
         return new Promise((resolve, reject) => {
             var req = https.request(options, (response) => {
                 let responseBody = '';
@@ -72,12 +53,15 @@ export class GithubClient {
                 });
     
                 response.on('end', () => {
-                    if(responseBody.length){
+                    if(responseBody.length && response.statusCode == 200){
                         try{
                             resolve(JSON.parse(responseBody));
                         } catch (error) {
                             reject(error);
                         }
+                    } else {
+                        console.error('Error occurred, ', options.path, response.statusCode)
+                        reject(new Error(response.statusCode?.toString()))
                     }
                 });
             }).on('error', (error) => {
@@ -86,6 +70,6 @@ export class GithubClient {
             });
     
             req.end();
-        });        
+        });   
     }
 }
