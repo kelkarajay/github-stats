@@ -23,4 +23,4 @@ Start using `npm run prod`
 
 Docker image can be pulled from the Github registry. To use, pull the image and run -
 
-`docker run -p 8000:8000 -e GH_TOKEN=5fc5c4d9311611081a439359a423c49b9d220ee3 server`
+`docker run -p 8000:8000 -e GH_TOKEN=<INSERT TOKEN HERE> server`
