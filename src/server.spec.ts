@@ -1,10 +1,11 @@
 import "jasmine";
 import {Server} from "./server";
 import http from 'http';
+import { GithubClient } from "./client/github-client";
 
 
 describe("Server Tests - ", () => {
-    var server : Server = new Server();
+    var server : Server = new Server(new GithubClient());
 
     beforeAll(function() {
         server.startServer();
