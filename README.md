@@ -19,7 +19,7 @@ Follow the same steps except for Step No. 6.
 
 Start using `npm run prod`
 
-### Usage with Docker (⚠️ Work In Progress)
+### Usage with Docker
 
 Docker image can be pulled from the Github registry. To use, pull the image and run -
 
